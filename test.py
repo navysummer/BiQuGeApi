@@ -1,4 +1,3 @@
-from lxml import etree
 import requests
 from config import sitesConfig,sites
 from bs4 import BeautifulSoup
@@ -16,22 +15,23 @@ class Book():
                 data = {"searchkey":keyword}
             url = self.site + self.siteConfig['search']['path']
             res = requests.post(url,data=data)
-            # soup = BeautifulSoup(res.text.encode("ISO-8859-1").decode("utf-8"), 'lxml')
-            # table = soup.find('table')
-            # print(table)
-            # print(res.encoding)
             res.encoding = "utf-8"
-            # print(res.text)
-            tree = etree.HTML(res.text)
-            # print(tree)
-            xp = self.siteConfig['search']['xpath']
-            # print(xp.extract())
-            rt = tree.xpath(xp)
-            # print(rt)
-            for item in rt:
-                content = etree.tostring(item, method='html')
-                
-                print(content)
+            soup = BeautifulSoup(res.text, 'lxml')
+            table = soup.find('table')
+            trs = table.find_all('tr')
+            books = []
+            for tr in trs:
+                tds = tr.find_all('td')
+                book = {'name':'','author':'','last':'','last_update_time':'','url':'','last_url':''}
+                if tds:
+                    book['name'] = tds[0].text.strip()
+                    book['url'] = tds[0].find('a')['href']
+                    book['last'] = tds[1].text.strip()
+                    book['last_url'] = self.site + tds[1].find('a')['href']
+                    book['author'] = tds[2].text.strip()
+                    book['last_update_time'] = tds[3].text.strip()
+                    books.append(book)
+            return books
 
 
 
