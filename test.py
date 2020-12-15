@@ -31,7 +31,7 @@ class Book():
                     book['author'] = tds[2].text.strip()
                     book['last_update_time'] = tds[3].text.strip()
                     books.append(book)
-            return books
+        return books
 
     def get_chapters(self,url):
         book = {'name':'','author':'','url':'','desc':'','chapters':[]}
@@ -67,7 +67,6 @@ class Book():
             chapter['next_url'] = self.site + cinfo.find('a',text='下一章')['href']
             chapter['chapters_url'] = self.site + cinfo.find('a',text='章节目录')['href']
             chapter['context'] = box_con.find('div',id='content').text
-        print(chapter)
         return chapter
 
 
